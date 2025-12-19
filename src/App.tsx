@@ -84,12 +84,43 @@ const Hero = () => {
 };
 
 const Countdown = () => {
+    const calculateTimeLeft = () => {
+        const targetDate = new Date('2026-10-03T00:00:00');
+        const now = new Date();
+        const difference = targetDate.getTime() - now.getTime();
+
+        if (difference > 0) {
+            return {
+                days: Math.floor(difference / (1000 * 60 * 60 * 24)),
+                hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
+                minutes: Math.floor((difference / 1000 / 60) % 60),
+            };
+        }
+        return { days: 0, hours: 0, minutes: 0 };
+    };
+
+    const [timeLeft, setTimeLeft] = useState(calculateTimeLeft());
+
+    useEffect(() => {
+        const timer = setInterval(() => {
+            setTimeLeft(calculateTimeLeft());
+        }, 60000);
+
+        return () => clearInterval(timer);
+    }, []);
+
     return (
         <div className="flex gap-6 md:gap-10 font-serif bg-gold/5 backdrop-blur-md px-8 py-4 rounded-none border border-gold/20 shadow-2xl">
-            {['Days', 'Hours', 'Mins'].map((label, i) => (
-                <div key={label} className="flex flex-col items-center">
-                    <span className="text-2xl md:text-4xl font-light text-gold-gradient">00</span>
-                    <span className="text-[7px] uppercase tracking-[0.3em] text-gold/40 mt-1">{label}</span>
+            {[
+                { label: 'Days', value: timeLeft.days },
+                { label: 'Hours', value: timeLeft.hours },
+                { label: 'Mins', value: timeLeft.minutes }
+            ].map((item) => (
+                <div key={item.label} className="flex flex-col items-center">
+                    <span className="text-4xl md:text-6xl font-light text-gold-gradient">
+                        {String(item.value).padStart(2, '0')}
+                    </span>
+                    <span className="text-[9px] md:text-[10px] uppercase tracking-[0.3em] text-gold/40 mt-2">{item.label}</span>
                 </div>
             ))}
         </div>
@@ -112,7 +143,7 @@ const Intro = () => (
                     >
                         The Destination
                     </motion.span>
-                    <h2 className="text-5xl md:text-7xl font-serif text-text leading-[0.85] mb-8">
+                    <h2 className="text-6xl md:text-8xl font-serif text-text leading-[0.85] mb-8">
                         The <br /> <i className="text-gold italic font-light">Quiet</i> <br /> Life.
                     </h2>
                     <div className="w-24 h-[1px] bg-gold/30 mt-12"></div>
@@ -127,21 +158,21 @@ const Intro = () => (
                         className="text-xl md:text-4xl md:leading-[1.2] font-serif text-text/90 mb-24 indent-[10%] max-w-[95%]"
                     >
                         We gather on the <span className="text-gold italic">pristine</span> shores of Goa to celebrate a milestone.
-                        A weekend of vintage glamour, where time slows down and every sunset is a ceremony.
+                        A weekend where time slows down and every sunset is a ceremony.
                     </motion.p>
 
                     <div className="grid md:grid-cols-2 gap-20">
                         <div className="pt-8 border-t border-gold/10">
-                            <p className="font-sans text-[9px] tracking-[0.5em] uppercase mb-8 text-gold/50">Volume I / The Vibe</p>
-                            <p className="text-lg leading-[1.8] text-text/70 font-light pl-0">
+                            <p className="font-sans text-xs tracking-[0.5em] uppercase mb-8 text-gold/50">Volume I / The Vibe</p>
+                            <p className="text-xl leading-[1.8] text-text/70 font-light pl-0">
                                 A tiny emerald land on the west coast of India, Goa is a former Portuguese colony with a rich history.
                                 It is not just a place, but a state of mind.
                             </p>
                         </div>
                         <div className="bg-gold/[0.03] p-12 border border-gold/10 backdrop-blur-sm self-start">
-                            <p className="font-sans text-[9px] tracking-[0.5em] uppercase mb-8 text-gold/50">Volume II / Susegad</p>
-                            <p className="text-lg leading-[1.8] text-text/70 font-light">
-                                The concept of <span className="text-gold italic font-serif text-2xl">susegad</span> — quiet satisfaction — reflects the unique blend of culture here.
+                            <p className="font-sans text-xs tracking-[0.5em] uppercase mb-8 text-gold/50">Volume II / Susegad</p>
+                            <p className="text-xl leading-[1.8] text-text/70 font-light">
+                                The concept of <span className="text-gold italic font-serif text-3xl">susegad</span> — quiet satisfaction — reflects the unique blend of culture here.
                                 It is the art of living well, slowly, and with intention.
                             </p>
                         </div>
@@ -169,7 +200,7 @@ const Itinerary = () => {
         goa: [
             { date: 'Oct 1, 2026', title: 'Fly to Goa', desc: 'Group flight to Goa. Check-in at accommodation.' },
             { date: 'Oct 2, 2026', title: 'Old Goa & City Tour', desc: <>Guided tour of Old Goa and town. <br />Group Dinner in Goa.</> },
-            { date: 'Oct 3, 2026 • 6:00 PM', title: "Yemee's 50th Party", desc: <>The Main Event at <a href="https://bay15.in/thegallery/" target="_blank" className="text-gold underline underline-offset-4 font-bold">Bay 15 (The Gallery)</a>. <br />Dress Code: Extravagant Vintage.</> },
+            { date: 'Oct 3, 2026 • 6:00 PM', title: "Yemee's 50th Party", desc: <>The Main Event at <a href="https://bay15.in/thegallery/" target="_blank" className="text-gold underline underline-offset-4 font-bold">Bay 15 (The Gallery)</a>. <br /></> },
         ],
         departure: [
             { date: 'Oct 4, 2026', title: 'Recovery', desc: 'Relax, beach day, and recovery brunch.' },
@@ -327,36 +358,36 @@ const Details = () => {
                                     <span className="text-gold text-xs tracking-[0.4em] uppercase font-bold">The Esthetics</span>
                                 </div>
                                 <h2 className="text-5xl md:text-7xl font-serif text-white leading-none tracking-tight mb-8">
-                                    Pure <br />
-                                    <span className="italic font-light text-gold ml-12">Sophistication.</span>
+                                    Coastal <br />
+                                    <span className="italic font-light text-gold ml-12">Opulence.</span>
                                 </h2>
                                 <p className="text-gray-400 text-lg font-light leading-relaxed max-w-md">
-                                    A curated experience where every detail is a <span className="text-gold italic font-serif">conversation</span> between tradition and modern luxury.
+                                    A celebration soaked in salt and sun, where the <span className="text-gold italic font-serif">spirit of Goa</span> turns every moment into a memory.
                                 </p>
                             </header>
 
                             <div className="space-y-12 border-l border-gold/20 pl-8 ml-2">
                                 <div className="group transition-all duration-500">
-                                    <h4 className="text-[10px] tracking-[0.3em] uppercase text-gold/60 mb-2">Accommodation</h4>
-                                    <h3 className="text-3xl font-serif text-white mb-3 group-hover:text-gold transition-colors">Bay 15</h3>
-                                    <p className="text-gray-500 text-sm font-light leading-relaxed mb-4 max-w-sm">
+                                    <h4 className="text-xs tracking-[0.3em] uppercase text-gold/60 mb-2">Accommodation</h4>
+                                    <h3 className="text-4xl font-serif text-white mb-3 group-hover:text-gold transition-colors">Bay 15</h3>
+                                    <p className="text-gray-500 text-lg font-light leading-relaxed mb-4 max-w-md">
                                         Accommodation available on a <span className="text-gold italic">first come, first serve</span> basis. Experience the waterfront charm with all modern comforts.
                                     </p>
                                     <div className="flex flex-col gap-1 mb-6">
                                         <div className="flex items-baseline gap-3">
-                                            <span className="text-xl font-serif text-gold">₹6,000</span>
-                                            <span className="text-[10px] tracking-widest text-gray-600 uppercase">(Approx. $100) / Night</span>
+                                            <span className="text-2xl font-serif text-gold">₹6,000</span>
+                                            <span className="text-xs tracking-widest text-gray-600 uppercase">(Approx. $100) / Night</span>
                                         </div>
-                                        <span className="text-[9px] tracking-widest text-text/30 uppercase">+ taxes, including breakfast</span>
+                                        <span className="text-[10px] tracking-widest text-text/30 uppercase">+ taxes, including breakfast</span>
                                     </div>
                                 </div>
 
                                 <div className="pt-8 border-t border-gold/10">
-                                    <h4 className="text-[10px] tracking-[0.3em] uppercase text-gold/60 mb-2">Travel & Tours</h4>
-                                    <p className="text-gray-500 text-sm font-light leading-relaxed mb-4 max-w-sm">
+                                    <h4 className="text-xs tracking-[0.3em] uppercase text-gold/60 mb-2">Travel & Tours</h4>
+                                    <p className="text-gray-500 text-lg font-light leading-relaxed mb-4 max-w-md">
                                         For bookings for tours in India (Golden Triangle etc.), internal flights, or transfers, please contact <span className="text-white font-serif italic">Vikas from YouV Tours</span>.
                                     </p>
-                                    <p className="text-[10px] text-gold/80 tracking-widest uppercase mb-6">
+                                    <p className="text-xs text-gold/80 tracking-widest uppercase mb-6">
                                         Reference: "Yemee Fernandes"
                                     </p>
                                     <a
@@ -447,8 +478,8 @@ const AdminDashboard = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => v
                 {!isLoggedIn ? (
                     <div className="max-w-md mx-auto text-center py-10">
                         <Lock className="w-8 h-8 text-gold/50 mx-auto mb-6" />
-                        <h2 className="font-serif text-3xl text-gold mb-2">Admin Access</h2>
-                        <p className="text-text/40 text-[10px] tracking-widest uppercase mb-8">Restricted Area</p>
+                        <h2 className="font-serif text-4xl text-gold mb-2">Admin Access</h2>
+                        <p className="text-text/40 text-xs tracking-widest uppercase mb-8">Restricted Area</p>
                         <form onSubmit={handleLogin} className="space-y-6">
                             <div>
                                 <input
@@ -456,11 +487,11 @@ const AdminDashboard = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => v
                                     placeholder="Enter Admin Email"
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
-                                    className="w-full bg-transparent border-b border-gold/20 py-3 text-text focus:border-gold outline-none transition-colors text-center placeholder:text-text/20"
+                                    className="w-full bg-transparent border-b border-gold/20 py-3 text-text text-lg focus:border-gold outline-none transition-colors text-center placeholder:text-text/20"
                                 />
                             </div>
-                            {error && <p className="text-red-500 text-[10px] tracking-widest uppercase">{error}</p>}
-                            <button type="submit" className="bg-gold text-black px-8 py-3 uppercase tracking-widest text-xs font-bold hover:bg-white transition-colors">
+                            {error && <p className="text-red-500 text-xs tracking-widest uppercase">{error}</p>}
+                            <button type="submit" className="bg-gold text-black px-8 py-3 uppercase tracking-widest text-sm font-bold hover:bg-white transition-colors">
                                 {loading ? 'Verifying...' : 'Login'}
                             </button>
                         </form>
@@ -469,14 +500,14 @@ const AdminDashboard = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => v
                     <div>
                         <div className="flex flex-col md:flex-row justify-between items-end mb-12 border-b border-gold/20 pb-6 gap-6">
                             <div>
-                                <span className="text-gold text-xs tracking-[0.4em] uppercase block mb-2">Guest List</span>
-                                <h2 className="font-serif text-3xl text-white">Honoured to Attend</h2>
+                                <span className="text-gold text-sm tracking-[0.4em] uppercase block mb-2">Guest List</span>
+                                <h2 className="font-serif text-4xl text-white">Honoured to Attend</h2>
                             </div>
                             <div className="text-right flex items-center gap-8">
-                                <button onClick={fetchAttendees} className="text-[10px] uppercase tracking-widest text-gold/50 hover:text-gold">Refresh</button>
+                                <button onClick={fetchAttendees} className="text-xs uppercase tracking-widest text-gold/50 hover:text-gold">Refresh</button>
                                 <div>
-                                    <p className="text-gold text-3xl font-serif leading-none">{attendees.length}</p>
-                                    <p className="text-text/40 text-[9px] tracking-widest uppercase mt-1">Confirmed</p>
+                                    <p className="text-gold text-4xl font-serif leading-none">{attendees.length}</p>
+                                    <p className="text-text/40 text-xs tracking-widest uppercase mt-1">Confirmed</p>
                                 </div>
                             </div>
                         </div>
@@ -489,24 +520,24 @@ const AdminDashboard = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => v
                             <div className="overflow-x-auto">
                                 <table className="w-full text-left border-collapse min-w-[800px]">
                                     <thead>
-                                        <tr className="border-b border-gold/10 text-gold/50 text-[10px] uppercase tracking-widest">
+                                        <tr className="border-b border-gold/10 text-gold/50 text-xs uppercase tracking-widest">
                                             <th className="py-4 font-normal w-[20%]">Name</th>
                                             <th className="py-4 font-normal w-[25%]">Email</th>
-                                            <th className="py-4 font-normal text-center w-[10%]">Guests</th>
-                                            <th className="py-4 font-normal w-[20%]">Dietary</th>
-                                            <th className="py-4 font-normal w-[25%]">Note</th>
-                                            <th className="py-4 font-normal text-right">Date</th>
+                                            <th className="py-4 font-normal text-center w-[10%] align-top">Guests</th>
+                                            <th className="py-4 font-normal w-[20%] pl-8 align-top">Dietary</th>
+                                            <th className="py-4 font-normal w-[25%] align-top">Note</th>
+                                            <th className="py-4 font-normal text-right align-top pl-8">Date</th>
                                         </tr>
                                     </thead>
-                                    <tbody className="text-text/80 text-sm font-light">
+                                    <tbody className="text-text/90 text-base font-light">
                                         {attendees.map((person) => (
-                                            <tr key={person.id} className="border-b border-gold/5 hover:bg-gold/[0.02] transition-colors group">
+                                            <tr key={person.id} className="border-b border-gold/5 hover:bg-gold/[0.02] transition-colors group align-top">
                                                 <td className="py-4 pr-4 font-medium text-gold/90">{person.full_name}</td>
                                                 <td className="py-4 pr-4 text-text/60">{person.email}</td>
                                                 <td className="py-4 px-4 text-center">{person.guests_count}</td>
-                                                <td className="py-4 pr-4 text-text/60">{person.dietary_requirements || '-'}</td>
-                                                <td className="py-4 text-text/60 italic max-w-xs truncate group-hover:whitespace-normal group-hover:overflow-visible group-hover:bg-[#0a0a0a] group-hover:z-10 relative">{person.note || '-'}</td>
-                                                <td className="py-4 text-right text-[10px] text-text/30 uppercase tracking-wider">
+                                                <td className="py-4 pr-4 pl-8 text-text/60 whitespace-normal">{person.dietary_requirements || '-'}</td>
+                                                <td className="py-4 text-text/60 italic whitespace-normal">{person.note || '-'}</td>
+                                                <td className="py-4 text-right text-xs text-text/30 uppercase tracking-wider pl-8">
                                                     {new Date(person.created_at).toLocaleDateString()}
                                                 </td>
                                             </tr>
@@ -559,6 +590,8 @@ const RSVPForm = () => {
     });
     const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
 
+    const [errorMsg, setErrorMsg] = useState('');
+
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         setFormData({ ...formData, [e.target.id || e.target.name]: e.target.value });
     };
@@ -570,6 +603,7 @@ const RSVPForm = () => {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setStatus('submitting');
+        setErrorMsg('');
 
         try {
             const { error } = await supabase.from('rsvp').insert([
@@ -586,9 +620,10 @@ const RSVPForm = () => {
             if (error) throw error;
             setStatus('success');
             setFormData({ name: '', email: '', attendance: 'Honoured to attend', guests: '1', diet: '', note: '' });
-        } catch (error) {
+        } catch (error: any) {
             console.error('Error submitting RSVP:', error);
             setStatus('error');
+            setErrorMsg(error.message || 'Something went wrong. Please try again.');
         }
     };
 
@@ -677,7 +712,7 @@ const RSVPForm = () => {
 
                         {status === 'error' && (
                             <div className="mb-8 p-4 bg-red-900/20 border border-red-900/50 text-red-400 text-xs text-center uppercase tracking-widest">
-                                Something went wrong. Please try again.
+                                {errorMsg}
                             </div>
                         )}
 
