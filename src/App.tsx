@@ -20,7 +20,7 @@ const Navigation = () => {
         <nav className={`fixed top-0 w-full px-6 py-6 md:px-12 z-50 flex justify-between items-center transition-all duration-700 ${isScrolled ? 'bg-bg/95 border-b border-gold/20 py-4 backdrop-blur-md' : 'bg-transparent py-8'
             }`}>
             <div className="font-serif font-bold text-2xl text-gold tracking-tighter uppercase drop-shadow-sm">Yemee 50</div>
-            <a href="#rsvp" className="text-text uppercase tracking-[#0.3em] text-[10px] md:text-xs font-semibold group relative hover:text-gold transition-colors duration-500">
+            <a href="#rsvp" className="text-text uppercase tracking-[#0.3em] text-[9px] md:text-xs font-semibold group relative hover:text-gold transition-colors duration-500">
                 RSVP
                 <span className="absolute bottom-[-4px] left-0 w-full h-[1px] bg-gold scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-right group-hover:origin-left"></span>
             </a>
@@ -110,7 +110,7 @@ const Countdown = () => {
     }, []);
 
     return (
-        <div className="flex gap-6 md:gap-10 font-serif bg-gold/5 backdrop-blur-md px-8 py-4 rounded-none border border-gold/20 shadow-2xl">
+        <div className="flex gap-4 md:gap-10 font-serif bg-gold/5 backdrop-blur-md px-4 py-4 md:px-8 rounded-none border border-gold/20 shadow-2xl">
             {[
                 { label: 'Days', value: timeLeft.days },
                 { label: 'Hours', value: timeLeft.hours },
@@ -128,7 +128,7 @@ const Countdown = () => {
 };
 
 const Intro = () => (
-    <section className="py-40 bg-bg relative overflow-hidden border-b border-gold/10">
+    <section className="py-20 md:py-40 bg-bg relative overflow-hidden border-b border-gold/10">
         {/* Artistic Background Element */}
         <div className="absolute top-0 right-0 w-[50vw] h-full bg-sand opacity-20 -skew-x-12 z-0 origin-top"></div>
 
@@ -143,7 +143,7 @@ const Intro = () => (
                     >
                         The Destination
                     </motion.span>
-                    <h2 className="text-6xl md:text-8xl font-serif text-text leading-[0.85] mb-8">
+                    <h2 className="text-5xl md:text-8xl font-serif text-text leading-[0.85] mb-8">
                         The <br /> <i className="text-gold italic font-light">Quiet</i> <br /> Life.
                     </h2>
                     <div className="w-24 h-[1px] bg-gold/30 mt-12"></div>
@@ -155,7 +155,7 @@ const Intro = () => (
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
                         transition={{ delay: 0.2 }}
-                        className="text-xl md:text-4xl md:leading-[1.2] font-serif text-text/90 mb-24 indent-[10%] max-w-[95%]"
+                        className="text-xl md:text-4xl md:leading-[1.2] font-serif text-text/90 mb-24 md:indent-[10%] max-w-[95%]"
                     >
                         We gather on the <span className="text-gold italic">pristine</span> shores of Goa to celebrate a milestone.
                         A weekend where time slows down and every sunset is a ceremony.
@@ -209,7 +209,7 @@ const Itinerary = () => {
     };
 
     return (
-        <section id="itinerary" className="py-32 bg-[#050505] text-text relative overflow-hidden">
+        <section id="itinerary" className="py-20 md:py-32 bg-[#050505] text-text relative overflow-hidden">
             <div className="absolute inset-0 opacity-10 pointer-events-none">
                 <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-gold/10 via-transparent to-transparent"></div>
             </div>
@@ -270,7 +270,7 @@ const Chandelier = ({ scrollYProgress }: { scrollYProgress: any }) => {
     const chainHeight = useTransform(scrollYProgress, [0, 1], [20, 320]); // Starts at 20px to connect, grows by 300px
 
     return (
-        <div className="absolute -top-20 -left-20 md:-left-10 w-[300px] md:w-[400px] z-20 pointer-events-none mix-blend-screen opacity-90">
+        <div className="absolute -top-20 -left-10 md:-left-10 w-[180px] md:w-[400px] z-20 pointer-events-none mix-blend-screen opacity-90">
             {/* The Chain - Animated */}
             <motion.div
                 style={{ height: chainHeight }}
@@ -305,7 +305,7 @@ const Details = () => {
     });
 
     return (
-        <section ref={ref} id="details" className="py-40 md:py-64 bg-black px-6 relative border-t border-gold/10 overflow-hidden">
+        <section ref={ref} id="details" className="py-20 md:py-64 bg-black px-6 relative border-t border-gold/10 overflow-hidden">
             {/* Atmospheric Layers removed for pure black background */}
 
             <Chandelier scrollYProgress={scrollYProgress} />
@@ -630,7 +630,7 @@ const RSVPForm = () => {
 
 
     return (
-        <section id="rsvp" className="py-40 px-6 bg-[#030303] relative border-t border-gold/10">
+        <section id="rsvp" className="py-20 md:py-40 px-6 bg-[#030303] relative border-t border-gold/10">
             <div className="max-w-2xl mx-auto">
                 <div className="text-center mb-24">
                     <span className="text-gold text-xs tracking-[0.6em] uppercase block mb-4">Response</span>
