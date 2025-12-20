@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
-import { ArrowDown, Check, Send, Lock } from 'lucide-react';
+import { ArrowDown, Check, Send, Lock, ExternalLink } from 'lucide-react';
 import { supabase } from './supabaseClient';
-
+import Gallery from './components/Gallery';
 // --- COMPONENTS ---
 
 const Navigation = () => {
@@ -37,8 +37,8 @@ const Hero = () => {
         <section className="relative h-screen min-h-[800px] flex items-center justify-center overflow-hidden bg-bg">
             <motion.div style={{ y }} className="absolute inset-0 z-0">
                 <img
-                    src="/assets/images/hero-bg-light.png"
-                    alt="Goa Beach"
+                    src="/assets/images/hero-vintage-baby.png"
+                    alt="Yemee Childhood Memory"
                     className="w-full h-full object-cover opacity-60 scale-105"
                     style={{ filter: 'grayscale(100%) brightness(0.7) contrast(1.5) sepia(0.05)' }}
                 />
@@ -380,6 +380,20 @@ const Details = () => {
                                         </div>
                                         <span className="text-[10px] tracking-widest text-text/30 uppercase">+ taxes, including breakfast</span>
                                     </div>
+                                    <a
+                                        href="https://staahmax.staah.net/be/securepayment?propertyId=NjYxMg==&tkn=WVc1L01UZHpnL3hsazNoSHlNQU8zR0VWd2dKY2xpeHhQdFNGUWFNMnIvaz0="
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="group/btn relative inline-flex items-center gap-6 py-2"
+                                    >
+                                        <div className="w-12 h-12 rounded-full border border-gold/30 flex items-center justify-center transition-all duration-500 group-hover/btn:bg-gold group-hover/btn:border-gold">
+                                            <ExternalLink className="w-4 h-4 text-gold group-hover/btn:text-black transition-colors" />
+                                        </div>
+                                        <div className="flex flex-col">
+                                            <span className="text-white uppercase tracking-[0.2em] text-[10px] font-bold">Book Your Stay</span>
+                                            <span className="text-gray-600 text-[9px] tracking-widest uppercase mt-0.5 transition-colors group-hover/btn:text-gold">via Staah Max</span>
+                                        </div>
+                                    </a>
                                 </div>
 
                                 <div className="pt-8 border-t border-gold/10">
@@ -761,6 +775,7 @@ function App() {
             <Intro />
             <Itinerary />
             <Details />
+            <Gallery />
             <RSVPForm />
             <Footer onAdminClick={() => setIsAdminOpen(true)} />
             <AnimatePresence>
