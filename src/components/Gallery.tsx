@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, ZoomIn } from 'lucide-react';
+import { X } from 'lucide-react';
 
 const images = [
     "64c7d078-342f-48c3-a902-f6ba8c203f9b.JPG",
@@ -55,44 +55,135 @@ const images = [
 const Gallery = () => {
     const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
-    return (
-        <section className="py-20 md:py-40 bg-bg relative border-t border-gold/10">
-            <div className="max-w-[90vw] mx-auto">
-                <div className="text-center mb-24">
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                    >
-                        <span className="text-gold text-xs tracking-[0.6em] uppercase block mb-4">Golden Memories</span>
-                        <h2 className="text-4xl md:text-6xl font-serif text-text mb-6 italic font-light">The Gallery</h2>
-                        <div className="w-12 h-[1px] bg-gold/30 mx-auto mt-12"></div>
-                    </motion.div>
-                </div>
+    // Consistently seeded random helper
+    const seededRandom = (seed: number) => {
+        const x = Math.sin(seed++) * 10000;
+        return x - Math.floor(x);
+    };
 
-                <div className="columns-1 md:columns-3 lg:columns-4 gap-8 space-y-8 p-4">
-                    {images.map((img, index) => (
+    const scatteredImagesData = useMemo(() => {
+        // Deduplicate images first
+        const uniqueImages = Array.from(new Set(images));
+
+        // Use all unique images
+        const pool = uniqueImages;
+        const phi = 137.5; // Golden Angle
+
+        return pool.map((img, i) => {
+            // SPHERICAL/SPIRAL DISTRIBUTION (Vogel Spiral)
+            const index = i + 12; // Start slightly further out
+
+            // Distance from center (radius)
+            const distance = Math.sqrt(index) * 150;
+
+            const theta = index * phi * (Math.PI / 180);
+
+            const x = Math.cos(theta) * distance;
+            const y = Math.sin(theta) * distance;
+
+            const rotate = (seededRandom(i * 789) * 30) - 15;
+            const scale = 0.85 + (seededRandom(i * 101) * 0.3);
+
+            return {
+                src: img,
+                x,
+                y,
+                rotate,
+                scale,
+                zIndex: Math.floor(seededRandom(i * 111) * 30),
+            };
+        });
+    }, []);
+
+    const featuredImages = [
+        { src: "/gallery/featured-1.png", x: -320, y: 50, rotate: -6, z: 40, label: "Featured Left" },
+        { src: "/assets/images/hero-vintage-baby.png", x: 0, y: -20, rotate: 2, z: 50, label: "Hero Center" },
+        { src: "/gallery/featured-2.png", x: 320, y: 50, rotate: 5, z: 40, label: "Featured Right" },
+    ];
+
+    return (
+        <section className="py-20 bg-[#080808] relative overflow-hidden min-h-[1600px] flex flex-col items-center justify-center border-t border-gold/10">
+            {/* Texture */}
+            <div className="absolute inset-0 opacity-[0.05] pointer-events-none bg-grain mix-blend-overlay"></div>
+
+            {/* Vignette */}
+            <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_center,transparent_0%,#000000_90%)] z-20"></div>
+
+            <div className="text-center z-30 w-full mb-12 absolute top-20 pointer-events-none">
+                <span className="text-gold text-xs tracking-[0.6em] uppercase block mb-4">Timeless Moments</span>
+                <h2 className="text-4xl md:text-6xl font-serif text-text italic font-light drop-shadow-lg">The Gallery</h2>
+            </div>
+
+            <div className="relative w-full h-[1400px] flex items-center justify-center overflow-hidden translate-y-[100px]">
+                {/* Scaled container to fit the large scattered arrangement */}
+                <div className="relative w-[2400px] h-[2400px] flex items-center justify-center scale-[0.35] md:scale-[0.45] lg:scale-[0.55] origin-center transition-transform duration-1000">
+
+                    {/* SCATTERED BACKGROUND IMAGES */}
+                    {scatteredImagesData.map((img, i) => (
                         <motion.div
-                            key={index}
-                            layoutId={`image-${index}`}
-                            initial={{ opacity: 0, y: 50 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true, margin: "-50px" }}
-                            transition={{ duration: 0.8, delay: index % 3 * 0.1 }}
-                            className="break-inside-avoid relative group cursor-pointer overflow-hidden rounded-sm"
-                            onClick={() => setSelectedImage(img)}
+                            key={`scatter-${i}`}
+                            className="absolute bg-white p-3 shadow-[0_4px_20px_rgba(0,0,0,0.5)] cursor-pointer group transition-all duration-300 ease-out"
+                            style={{
+                                x: img.x,
+                                y: img.y,
+                                rotate: img.rotate,
+                                zIndex: img.zIndex,
+                            }}
+                            whileHover={{
+                                scale: 1.3,
+                                rotate: 0,
+                                zIndex: 100, // Force top on hover
+                                transition: { duration: 0.2 }
+                            }}
+                            onClick={() => setSelectedImage(img.src)}
                         >
-                            <div className="absolute inset-0 bg-gold/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-10 flex items-center justify-center">
-                                <ZoomIn className="text-white w-8 h-8 opacity-0 group-hover:opacity-100 transition-opacity duration-700 delay-100" />
+                            <div className="w-[180px] h-[240px] overflow-hidden bg-gray-100 relative">
+                                <img
+                                    src={`/gallery/${img.src}`}
+                                    alt="Memory"
+                                    className="w-full h-full object-cover grayscale opacity-80 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-500"
+                                    loading="lazy"
+                                />
+                                <div className="absolute inset-0 bg-sepia-[.2] opacity-20 pointer-events-none mix-blend-multiply"></div>
                             </div>
-                            <img
-                                src={`/gallery/${img}`}
-                                alt={`Memory ${index + 1}`}
-                                loading="lazy"
-                                className="w-full h-auto object-cover grayscale transition-all duration-700 group-hover:grayscale-0 group-hover:scale-105"
-                            />
                         </motion.div>
                     ))}
+
+                    {/* CENTER TRIO (Always on top of scatter, but can be hovered) */}
+                    {featuredImages.map((img, index) => (
+                        <motion.div
+                            key={`featured-${index}`}
+                            className="absolute bg-white p-4 pb-12 shadow-[0_20px_50px_rgba(0,0,0,0.8)] cursor-pointer group"
+                            style={{
+                                zIndex: img.z,
+                                x: img.x,
+                                y: img.y,
+                                rotate: img.rotate,
+                            }}
+                            whileHover={{
+                                scale: 1.05,
+                                zIndex: 100,
+                                rotate: 0,
+                                y: img.y - 20,
+                                transition: { type: "spring", stiffness: 300, damping: 20 }
+                            }}
+                            onClick={() => setSelectedImage(img.src)}
+                        >
+                            <div className="w-[300px] h-[400px] overflow-hidden bg-black relative border border-gray-100">
+                                <img
+                                    src={img.src}
+                                    alt={img.label}
+                                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                                />
+                                {/* Glossy Overlay */}
+                                <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/5 to-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
+                            </div>
+                        </motion.div>
+                    ))}
+
+                    {/* Golden Center Glow (Behind Trio) */}
+                    <div className="absolute w-[800px] h-[600px] bg-gold/10 blur-[120px] rounded-full mix-blend-screen pointer-events-none z-[25]"></div>
+
                 </div>
             </div>
 
@@ -112,13 +203,14 @@ const Gallery = () => {
                             <X size={32} />
                         </button>
                         <motion.img
-                            src={`/gallery/${selectedImage}`}
+                            src={selectedImage.startsWith('/') ? selectedImage : `/gallery/${selectedImage}`}
                             alt="Selected memory"
-                            className="max-h-[90vh] max-w-[90vw] object-contain shadow-2xl border border-gold/10"
-                            initial={{ scale: 0.9 }}
-                            animate={{ scale: 1 }}
-                            exit={{ scale: 0.9 }}
-                            onClick={(e) => e.stopPropagation()} // Prevent closing when clicking the image itself
+                            className="max-h-[85vh] max-w-[90vw] object-contain shadow-2xl border-[12px] border-white/90"
+                            initial={{ scale: 0.9, rotate: -2 }}
+                            animate={{ scale: 1, rotate: 0 }}
+                            exit={{ scale: 0.9, rotate: 2 }}
+                            transition={{ type: "spring", damping: 25 }}
+                            onClick={(e) => e.stopPropagation()}
                         />
                     </motion.div>
                 )}
