@@ -24,12 +24,24 @@ git push origin main
 2.  Click **"Add New..."** > **"Project"**.
 3.  Find your `yemee-50th-goa` repository in the list and click **"Import"**.
 
+## Step 2.1: Choose Your URL Name
+
+*   **Project Name**: By default, this will be `yemee-50th-goa`.
+    *   **Change this now** if you want your URL to look different (e.g., `yemee-50`.vercel.app).
+    *   The "Project Name" you set here becomes your free `.vercel.app` subdomain.
+
 ## Step 3: Configure Project
 
 Vercel will automatically detect that you are using **Vite**.
 
 1.  **Framework Preset**: Should be auto-detected as `Vite`.
+    *   If it is not, select **Vite** from the dropdown.
 2.  **Root Directory**: Check that it is set to `./` (default).
+3.  **Build and Output Settings**:
+    *   These should auto-populate, but if you need to enter them manually:
+    *   **Build Command**: `npm run build`
+    *   **Output Directory**: `dist`
+    *   **Install Command**: `npm install`
 
 ## Step 4: Add Environment Variables (CRITICAL)
 
@@ -53,4 +65,12 @@ You **MUST** add your Supabase keys here, as they are no longer in the code for 
 
 ## Future Updates
 
-Every time you push code to the `main` branch on GitHub, Vercel will automatically obtain the changes and redeploy your site within seconds.
+
+## How to Change the URL Later
+
+If you want to change the URL *after* deploying (or use a custom domain like `yemee50.com`):
+
+1.  Go to your Project Dashboard on Vercel.
+2.  Click **Settings** (top tab).
+3.  Click **Domains** (side menu).
+4.  You can **Edit** the existing domain or **Add** a new one.

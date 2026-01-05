@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X } from 'lucide-react';
 
@@ -54,6 +54,14 @@ const images = [
 
 const Gallery = () => {
     const [selectedImage, setSelectedImage] = useState<string | null>(null);
+    const [isMobile, setIsMobile] = useState(false);
+
+    useEffect(() => {
+        const checkMobile = () => setIsMobile(window.innerWidth < 768);
+        checkMobile();
+        window.addEventListener('resize', checkMobile);
+        return () => window.removeEventListener('resize', checkMobile);
+    }, []);
 
     // Consistently seeded random helper
     const seededRandom = (seed: number) => {
@@ -74,15 +82,25 @@ const Gallery = () => {
             const index = i + 12; // Start slightly further out
 
             // Distance from center (radius)
-            const distance = Math.sqrt(index) * 150;
+            let distance = Math.sqrt(index) * 150;
 
             const theta = index * phi * (Math.PI / 180);
 
-            const x = Math.cos(theta) * distance;
-            const y = Math.sin(theta) * distance;
+            let x = Math.cos(theta) * distance;
+            let y = Math.sin(theta) * distance;
 
             const rotate = (seededRandom(i * 789) * 30) - 15;
             const scale = 0.85 + (seededRandom(i * 101) * 0.3);
+
+            // MOBILE ADJUSTMENT: Push images away from the center column
+            if (isMobile) {
+                // If the image is horizontally too close to the center (where the column is)
+                // Push it out.
+                if (Math.abs(x) < 350) {
+                    // Push outwards horizontally based on which side it's already on
+                    x = x >= 0 ? x + 350 : x - 350;
+                }
+            }
 
             return {
                 src: img,
@@ -93,13 +111,19 @@ const Gallery = () => {
                 zIndex: Math.floor(seededRandom(i * 111) * 30),
             };
         });
-    }, []);
+    }, [isMobile]);
 
-    const featuredImages = [
-        { src: "/gallery/featured-1.png", x: -320, y: 50, rotate: -6, z: 40, label: "Featured Left" },
-        { src: "/assets/images/hero-vintage-baby.png", x: 0, y: -20, rotate: 2, z: 50, label: "Hero Center" },
-        { src: "/gallery/featured-2.png", x: 320, y: 50, rotate: 5, z: 40, label: "Featured Right" },
-    ];
+    const featuredImages = isMobile
+        ? [
+            { src: "/gallery/featured-1.png", x: 0, y: -380, rotate: -3, z: 40, label: "Featured Top" },
+            { src: "/assets/images/hero-vintage-baby.png", x: 0, y: 0, rotate: 0, z: 50, label: "Hero Center" },
+            { src: "/gallery/featured-2.png", x: 0, y: 380, rotate: 3, z: 40, label: "Featured Bottom" },
+        ]
+        : [
+            { src: "/gallery/featured-1.png", x: -320, y: 50, rotate: -6, z: 40, label: "Featured Left" },
+            { src: "/assets/images/hero-vintage-baby.png", x: 0, y: -20, rotate: 2, z: 50, label: "Hero Center" },
+            { src: "/gallery/featured-2.png", x: 320, y: 50, rotate: 5, z: 40, label: "Featured Right" },
+        ];
 
     return (
         <section className="py-20 bg-[#080808] relative overflow-hidden min-h-[1600px] flex flex-col items-center justify-center border-t border-gold/10">
